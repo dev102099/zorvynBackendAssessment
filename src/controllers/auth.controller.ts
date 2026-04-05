@@ -8,16 +8,13 @@ export class AuthController {
 
       // Basic Input Validation
       if (!email || !password) {
-        res
-          .status(400)
-          .json({
-            status: "error",
-            message: "Email and password are required.",
-          });
-        return; // Early return prevents further execution
+        res.status(400).json({
+          status: "error",
+          message: "Email and password are required.",
+        });
+        return;
       }
 
-      // Call the service (Defaults to 'Viewer' if no role is provided)
       const newUser = await AuthService.registerUser(email, password, role);
 
       res.status(201).json({
@@ -26,7 +23,6 @@ export class AuthController {
         data: newUser,
       });
     } catch (error: any) {
-      // If it's our custom thrown error, send a 400 Bad Request. Otherwise, 500.
       const statusCode = error.message.includes("already exists") ? 409 : 400;
       res.status(statusCode).json({ status: "error", message: error.message });
     }
@@ -37,12 +33,10 @@ export class AuthController {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        res
-          .status(400)
-          .json({
-            status: "error",
-            message: "Email and password are required.",
-          });
+        res.status(400).json({
+          status: "error",
+          message: "Email and password are required.",
+        });
         return;
       }
 

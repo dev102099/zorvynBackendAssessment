@@ -34,7 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error("🛑 [Error]:", err.message || err);
+  console.error("[Error]:", err.message || err);
 
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({

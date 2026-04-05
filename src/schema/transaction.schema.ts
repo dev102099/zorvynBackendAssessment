@@ -39,10 +39,9 @@ export const filterTransactionSchema = z.object({
     category: z.string().optional(),
     type: z.enum(["INCOME", "EXPENSE"]).optional(),
 
-    // 👇 NEW: Add pagination parameters with safe defaults
     page: z.coerce.number().min(1).default(1),
     limit: z.coerce.number().min(1).max(100).default(10),
-    search: z.string().optional(), // Max 100 per request
+    search: z.string().optional(),
   }),
 });
 export const summarySchema = z.object({

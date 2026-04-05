@@ -1,10 +1,10 @@
-# 📊 Financial Dashboard API
+# Financial Dashboard API
 
 Welcome to the backend submission for the Financial Dashboard API!
 
 This is a REST API built with **Node.js, Express, and TypeScript** designed to power a financial dashboard. Instead of just building basic CRUD routes, this project focuses heavily on enterprise-grade patterns: strict data validation, Role-Based Access Control (RBAC), database query optimization, and security.
 
-## 🛠 The Tech Stack
+## The Tech Stack
 
 - **Core:** Node.js, Express, TypeScript
 - **Database:** PostgreSQL (Hosted on Supabase)
@@ -14,7 +14,7 @@ This is a REST API built with **Node.js, Express, and TypeScript** designed to p
 
 ---
 
-## 🚀 Getting Started (Local Setup)
+## Getting Started (Local Setup)
 
 A seed script is included that automatically configures roles, creates test users, and generates realistic financial data so you don't have to test with an empty database.
 

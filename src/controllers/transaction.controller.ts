@@ -5,7 +5,7 @@ import { AuthRequest } from "../types/authRequest";
 export class TransactionController {
   static async create(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = req.user!.userId; // Guaranteed to exist by verifyToken middleware
+      const userId = req.user!.userId;
       const transaction = await TransactionService.create(userId, req.body);
 
       res.status(201).json({ status: "success", data: transaction });
@@ -52,7 +52,7 @@ export class TransactionController {
       const { id } = req.params as { id: string };
 
       await TransactionService.delete(id, userId);
-      res.status(204).send(); // 204 No Content is standard for successful deletion
+      res.status(204).send();
     } catch (error: any) {
       const statusCode = error.message.includes("not found") ? 404 : 500;
       res.status(statusCode).json({ status: "error", message: error.message });

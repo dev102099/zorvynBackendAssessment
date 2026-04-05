@@ -32,7 +32,7 @@ router.get(
 
 router.get(
   "/summary",
-  requirePermission("summary:read"), // Use the specific summary permission!
+  requirePermission("summary:read"),
   validate(summarySchema),
   TransactionController.getSummary,
 );

@@ -8,18 +8,15 @@ export const validate = (schema: ZodObject) => {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      // Zod checks the req.body against the schema
       await schema.parseAsync({
         body: req.body,
         query: req.query,
         params: req.params,
       });
 
-      // If it passes, move on to the Controller!
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        // Format Zod errors nicely for the frontend
         const errorMessages = error.issues.map((err) => ({
           field: err.path.join("."),
           message: err.message,

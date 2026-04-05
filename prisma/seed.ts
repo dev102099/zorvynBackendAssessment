@@ -1,7 +1,7 @@
 import { prisma } from "../src/lib/prisma";
 
 async function main(): Promise<void> {
-  console.log("🌱 Starting database seeding...");
+  console.log("Starting database seeding...");
 
   // 1. Prepare Permissions Data
   const permissionsData: { action: string }[] = [
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     skipDuplicates: true, // Prevents crashing if you run this twice!
   });
 
-  console.log(`✅ Processed ${createdPermissions.count} permissions.`);
+  console.log(`Processed ${createdPermissions.count} permissions.`);
 
   // 3. Prepare Roles Data
   const roles = [
@@ -77,14 +77,12 @@ async function main(): Promise<void> {
         },
       });
     }
-    console.log(`✅ Seeded role: ${role.name}`);
+    console.log(`Seeded role: ${role.name}`);
   }
 
-  console.log("🎉 Seeding fully complete!");
+  console.log("Seeding fully complete!");
 
-  // ... (Your existing roles and permissions code is above this)
-
-  console.log("👤 Setting up test user...");
+  console.log("Setting up test user...");
 
   // 1. Find the Admin role we just created
   const adminRole = await prisma.role.findUnique({ where: { name: "Admin" } });
@@ -217,14 +215,12 @@ async function main(): Promise<void> {
     data: transactions,
   });
 
-  console.log(
-    `✅ Successfully seeded ${createdTransactions.count} transactions!`,
-  );
+  console.log(`uccessfully seeded ${createdTransactions.count} transactions!`);
 }
 
 main()
   .catch(async (e) => {
-    console.error("❌ Seeding failed with error:", e);
+    console.error("Seeding failed with error:", e);
     process.exit(1);
   })
   .finally(async () => {

@@ -14,9 +14,7 @@ datasource db {
  
 }
 
-// ==========================================
 // 1. USER & ROLE MANAGEMENT (RBAC)
-// ==========================================
 
 model User {
   id           String        @id @default(uuid())
@@ -69,9 +67,8 @@ model RolePermission {
   @@map("role_permissions")
 }
 
-// ==========================================
 // 2. FINANCIAL RECORDS
-// ==========================================
+
 
 model Transaction {
   id        String   @id @default(uuid())
