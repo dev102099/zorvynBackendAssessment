@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+ 
+}
+
+// ==========================================
+// 1. USER & ROLE MANAGEMENT (RBAC)
+// ==========================================
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  status       String        @default("ACTIVE") // ACTIVE or INACTIVE
+  
+  // Relations
+  roleId       String
+  role         Role          @relation(fields: [roleId], references: [id])
+  transactions Transaction[]
+  
+  // Timestamps
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("users")
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique // e.g., 'Admin', 'Analyst', 'Viewer'
+  
+  // Relations
+  users       User[]
+  permissions RolePermission[]
+  @@map("roles")
+}
+
+model Permission {
+  id     String           @id @default(uuid())
+  action String           @unique // e.g., 'record:create', 'record:read', 'summary:view'
+  
+  // Relations
+  roles  RolePermission[]
+  @@map("permissions")
+}
+
+// Join table linking Roles and Permissions
+model RolePermission {
+  roleId       String
+  permissionId String
+  
+  // Relations
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  // Composite primary key ensures a role can't have the same permission twice
+  @@id([roleId, permissionId]) 
+  @@map("role_permissions")
+}
+
+// ==========================================
+// 2. FINANCIAL RECORDS
+// ==========================================
+
+model Transaction {
+  id        String   @id @default(uuid())
+  amount    Decimal  @db.Decimal(10, 2) // Enforces safe financial math (no floating point errors)
+  type      String   // 'INCOME' or 'EXPENSE'
+  category  String   // e.g., 'Payroll', 'Software', 'Marketing'
+  date      DateTime
+  notes     String?  // Optional field
+  
+  // Relations: Tracks which user created the record
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("transactions")
+}
