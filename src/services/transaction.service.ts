@@ -22,12 +22,11 @@ export class TransactionService {
       if (filters.endDate) whereClause.date.lte = new Date(filters.endDate);
     }
     if (filters.search) {
-      // Use OR to search across multiple text fields at the same time
       whereClause.OR = [
         {
           notes: {
             contains: filters.search,
-            mode: "insensitive", // PostgreSQL specific: ignores capitalization!
+            mode: "insensitive",
           },
         },
         {
@@ -42,11 +41,11 @@ export class TransactionService {
     // 1. Calculate Pagination Math
     const page = Number(filters.page) || 1;
     const limit = Number(filters.limit) || 10;
-    const skip = (page - 1) * limit; // If page 2, skip the first 10 records
+    const skip = (page - 1) * limit; //
 
     // 2. Fire queries concurrently: Get the count AND the data
     const [totalRecords, transactions] = await Promise.all([
-      prisma.transaction.count({ where: whereClause }), // Counts total matches
+      prisma.transaction.count({ where: whereClause }),
       prisma.transaction.findMany({
         where: whereClause,
         orderBy: { date: "desc" },
@@ -111,7 +110,7 @@ export class TransactionService {
       if (filters.endDate) whereClause.date.lte = new Date(filters.endDate);
     }
 
-    // 🔥 FIRE ALL QUERIES CONCURRENTLY 🔥
+    //  FIRE ALL QUERIES CONCURRENTLY
     const [totalsData, categoryData, recentActivity, allForTrends] =
       await Promise.all([
         // Query 1: Total Income & Expenses

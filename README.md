@@ -94,3 +94,23 @@ Concurrent Aggregation: For the /summary endpoint, calculating total income, tot
 Decoupled RBAC: Access control is split into two distinct steps: Identity (verifyToken) and Authorization (requirePermission). This allows for the dynamic creation of new roles in the database without ever having to rewrite the core API logic.
 
 Rate Limiting: To ensure the API is production-ready, express-rate-limit is implemented to protect the server from brute-force login attempts and basic DoS attacks.
+
+## 🧠 Assumptions & Tradeoffs
+
+To deliver a highly optimized and maintainable API within the assessment timeframe, I made the following strategic decisions:
+
+### Assumptions
+
+1. **Single-Tenant Enterprise Model:** I assumed this dashboard is for a single company's internal use (B2B) rather than a personal finance app for millions of isolated users (B2C). Therefore, the `Viewer` role can see all aggregated company data, rather than being restricted to an empty personal ledger.
+2. **In-Memory JWT Validation:** I assumed standard stateless JWTs are sufficient for this scope. In a strict banking environment, I would implement a Redis blocklist to allow for immediate token revocation upon logout.
+
+### Tradeoffs
+
+1. **Concurrent Queries vs. Raw SQL (The `/summary` endpoint):** \* _Tradeoff:_ I chose to use `Promise.all()` to fire four concurrent Prisma queries instead of writing one massive, highly complex Raw SQL CTE (Common Table Expression).
+   - _Why:_ While raw SQL might save 2-3 milliseconds, using Prisma's query builder keeps the codebase strictly typed, database-agnostic, and much easier for future developers to maintain.
+2. **Hard Deletes vs. Soft Deletes:**
+   - _Tradeoff:_ Currently, the `DELETE /transactions/:id` route permanently removes the record from the database.
+   - _Why:_ For the scope of this assessment, this keeps the database clean. In a true production financial system, I would implement "Soft Deletes" (adding a `deletedAt` column) to preserve audit trails.
+3. **Zod Perimeter Validation vs. Controller Logic:**
+   - _Tradeoff:_ I pushed all `req.body` and `req.query` validation into Express middleware rather than handling it inside the controllers.
+   - _Why:_ This slightly increases the middleware stack, but it guarantees that the Controller and Service layers only ever process 100% sanitized, strictly typed data, eliminating dozens of potential runtime crashes.
