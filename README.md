@@ -20,11 +20,13 @@ A seed script is included that automatically configures roles, creates test user
 
 ### 1. Environment Variables
 
+create a supabase project for postgres database.
 Create a `.env` file in the root directory and add your connection strings:
 
 ```env
 PORT=3000
-DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT].supabase.co:5432/postgres"
+DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT].supabase.co:5432/postgres" (get this from your supabase database)
+DIRECT_URL (also from supabase database)
 JWT_SECRET="super_secret_jwt_key_here"
 ```
 
@@ -34,6 +36,7 @@ Run these commands to install packages, push the schema to PostgreSQL, and popul
 
 ```bash
 npm install
+npx prisma generate
 npx prisma db push
 npx prisma db seed
 ```
@@ -84,6 +87,59 @@ Authorization: Bearer <your_token>
 
 It fully supports pagination and fuzzy searching! Try hitting this URL to see it in action:
 GET /api/transactions?page=1&limit=5&search=salary&type=INCOME
+
+## Request Payloads (What to send in the body)
+
+When making POST or PATCH requests, ensure your Content-Type header is set to application/json. Here are the expected payloads for each endpoint based on the strict Zod validation rules:
+
+### Register a New User (POST /api/auth/register)
+
+```
+{
+  "email": "analyst@example.com",
+  "password": "strongpassword123",
+  "role": "Analyst"
+}
+```
+
+(Note: Valid roles are typically Admin, Analyst, or Viewer based on the seed data).
+
+### Login (POST /api/auth/login)
+
+```
+{
+  "email": "ceo@example.com",
+  "password": "securepassword123"
+}
+```
+
+### Create a Transaction (POST /api/transactions)
+
+```
+{
+  "amount": 4500.50,
+  "type": "INCOME",
+  "notes" :"" (optional),
+  "category": "Consulting Services",
+  "date": "2024-05-01T00:00:00.000Z"
+}
+```
+
+(Note: type must strictly be either "INCOME" or "EXPENSE").
+
+### Update a Transaction (PATCH /api/transactions/:id)
+
+```
+{
+   // all feilds optional
+  "amount": 5000.00,
+  "notes": "Updated payment for Q2 API integration (includes late fee)",
+  "type": "INCOME",
+  "notes" :"" (optional),
+  "category": "Consulting Services",
+  "date": "2024-05-01T00:00:00.000Z"
+}
+```
 
 ## Architectural Decisions & Highlights
 
