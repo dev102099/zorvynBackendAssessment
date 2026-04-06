@@ -8,7 +8,12 @@ export class TransactionController {
       const userId = req.user!.userId;
       const transaction = await TransactionService.create(userId, req.body);
 
-      res.status(201).json({ status: "success", data: transaction });
+      res
+        .status(201)
+        .json({
+          status: "success",
+          data: { ...transaction, amount: Number(transaction.amount) },
+        });
     } catch (error: any) {
       res.status(500).json({ status: "error", message: error.message });
     }

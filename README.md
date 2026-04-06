@@ -95,7 +95,7 @@ Decoupled RBAC: Access control is split into two distinct steps: Identity (verif
 
 Rate Limiting: To ensure the API is production-ready, express-rate-limit is implemented to protect the server from brute-force login attempts and basic DoS attacks.
 
-## 🧠 Assumptions & Tradeoffs
+## Assumptions & Tradeoffs
 
 To deliver a highly optimized and maintainable API within the assessment timeframe, I made the following strategic decisions:
 
@@ -114,3 +114,33 @@ To deliver a highly optimized and maintainable API within the assessment timefra
 3. **Zod Perimeter Validation vs. Controller Logic:**
    - _Tradeoff:_ I pushed all `req.body` and `req.query` validation into Express middleware rather than handling it inside the controllers.
    - _Why:_ This slightly increases the middleware stack, but it guarantees that the Controller and Service layers only ever process 100% sanitized, strictly typed data, eliminating dozens of potential runtime crashes.
+
+## Automated Testing
+
+This API includes a robust integration testing suite built with **Jest** and **Supertest**. Instead of just testing isolated functions, the tests send actual HTTP requests to the Express router, validating the entire lifecycle (Middleware -> Controller -> Service -> Database).
+
+### Running the Tests
+
+You do not need to configure a separate testing environment. The test suite is designed to run safely against your active development database without destroying your existing seeded data.
+
+Run the entire suite with a single command:
+
+```bash
+npm test
+```
+
+### Data Safety & Testing Strategy
+
+Because tests share the development database, I implemented two specific strategies to ensure existing data is never corrupted:
+
+Scoped Teardown: The beforeAll setup blocks are programmed to identify and delete only the specific test user (and their associated transactions) generated during the test run.
+
+Delta Testing (The Summary Endpoint): Instead of asserting hardcoded totals (which would fail if the database already contains seeded data), the tests read the baseline database state, inject test transactions, and verify the delta (the change in totals).
+
+### Test Coverage Highlights
+
+Authentication: Verifies successful registration, login, and rejection of bad credentials.
+
+Security (RBAC): Ensures unauthenticated users or users with insufficient roles are blocked with 401 or 403 errors.
+
+Data Validation: Tests the Zod middleware by sending intentionally malformed data.
