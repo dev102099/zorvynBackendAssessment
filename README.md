@@ -14,6 +14,10 @@ This is a REST API built with **Node.js, Express, and TypeScript** designed to p
 
 ---
 
+## Deplyoyed base url
+
+https://zorvynbackendassessment.onrender.com
+
 ## Getting Started (Local Setup)
 
 A seed script is included that automatically configures roles, creates test users, and generates realistic financial data so you don't have to test with an empty database.
@@ -86,7 +90,7 @@ Authorization: Bearer <your_token>
 ## Pro-tip for the GET /transactions endpoint:
 
 It fully supports pagination and fuzzy searching! Try hitting this URL to see it in action:
-GET /api/transactions?page=1&limit=5&search=salary&type=INCOME
+GET http://localhost:3000/api/transactions?page=1&limit=5&type=EXPENSE&startDate=2024-01-01&endDate=2024-03-31
 
 ## Request Payloads (What to send in the body)
 

@@ -34,8 +34,8 @@ export const updateTransactionSchema = z.object({
 
 export const filterTransactionSchema = z.object({
   query: z.object({
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
     category: z.string().optional(),
     type: z.enum(["INCOME", "EXPENSE"]).optional(),
 
